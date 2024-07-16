@@ -46,6 +46,22 @@ class Cart():
         if item_id_str in self.cart:
             del self.cart[item_id_str]
             self.save()
+            
+    def cart_total(self):
+        item_ids = self.cart.keys()
+        items = Item.objects.filter(id__in=item_ids)
+        quantities = self.cart
+        total = 0
+        for key, value in quantities.items():
+            key = int(key)
+            for item in items:
+                if item.id == key:
+                    if item.on_sale:
+                        total = total + (item.sale_price * value)
+                    else:
+                        total = total + (item.price * value)         
+        return total
+        
     
     def save(self):
         self.session['cart'] = self.cart

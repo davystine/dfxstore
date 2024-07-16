@@ -1,8 +1,12 @@
+{% load static %}
+
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
         <!-- Brand Logo -->
-        <a class="navbar-brand" href="{% url 'home' %}">DFX</a>
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src="{% static 'assets/dfxLOGOii.png' %}" alt="DFX Logo" style="height: 70px;">
+        </a>
         <!-- Navbar Toggler for Mobile View -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -16,15 +20,32 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
                 <!-- Conditional Links for Authenticated Users -->
                 {% if user.is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Account</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'accountinfo' %}">Account Info</a></li>
+                        </ul>
+                    </li>
+                    <!-- Management Links Visible Only to Admin Users -->
+                    {% if user.is_staff %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdownManagement" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Management</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownManagement">
+                                <li><a class="dropdown-item" href="{% url 'management:item_list' %}">Items</a></li>
+                                <li><a class="dropdown-item" href="{% url 'management:category_list' %}">Categories</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
                 {% else %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login/Register</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login/Register</a></li>
                 {% endif %}
                 <!-- Dropdown Menu for Shop -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{%url 'home'%}">All Items</a></li>
+                        <li><a class="dropdown-item" href="{% url 'category_summary' %}">All Items</a></li>
                         <li><hr class="dropdown-divider" /></li>
                         <li><a class="dropdown-item" href="{% url 'category' 'books' %}">Books</a></li>
                         <li><a class="dropdown-item" href="{% url 'category' 'smartphones' %}">Smartphones</a></li>
@@ -32,15 +53,27 @@
                     </ul>
                 </li>
             </ul>
-            <!-- Cart Button -->
-            <form class="d-flex">
-                <a class="btn btn-outline-dark" href="{% url 'cart_summary' %}">
-                    <i class="bi-cart-fill me-1"></i>
-                    Cart
-                    <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart_quantity">{{cart|length}}</span>
-                </a>
-            </form>
-            
+            <!-- Search Bar and Cart Button Container -->
+            <div class="d-flex align-items-center flex-nowrap">
+                <!-- Search Bar -->
+                <div class="me-2 p-2 my-2 border border-dark rounded-pill">
+                    <form class="d-flex position-relative" method="GET" action="{% url 'search' %}">
+                        {% csrf_token %}
+                        <input class="form-control bg-light rounded-pill border-0 py-0" type="search" placeholder="Search for products" aria-label="Search" name="searched" style="background-color: white; box-shadow: none;">
+                        <button class="btn btn-dark rounded-pill py-0" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
+                </div>
+                <!-- Cart Button -->
+                <div class="d-flex flex-nowrap" style="min-width: 150px;"> <!-- Added min-width here -->
+                    <a class="btn btn-outline-dark" href="{% url 'cart_summary' %}">
+                        <i class="bi-cart-fill me-1"></i>
+                        Cart
+                        <span class="badge bg-danger text-white ms-1 rounded-pill" id="cart_quantity">{{ cart|length }}</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </nav>

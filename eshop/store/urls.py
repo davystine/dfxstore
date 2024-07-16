@@ -7,6 +7,11 @@ urlpatterns = [
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
     path('register/', views.register_user, name='register'),
+    path('accountinfo/', views.accountinfo, name='accountinfo'),
+    path('profile/', views.profile, name='profile'),
+    path('password_update/', views.password_update, name='password_update'),
     path('item/<int:pk>', views.item, name='item'),
     path('category/<str:foo>', views.category, name='category'),
+    path('category_summary/', views.category_summary, name='category_summary'),
+    path('search/', views.search, name='search')
 ]

@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
-import uuid
+import uuid, datetime
+from django.db.models.signals import post_save
+
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -30,12 +33,30 @@ class Item(models.Model):
         return self.name
 
 class UserProfile(models.Model):
+    GENDER_CHOICES = [('', ''), ('M', 'Male'), ('F', 'Female'),('O', 'Other'),]
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    address = models.CharField(max_length=255, blank=True)
     phone_number = models.CharField(max_length=15, blank=True)
+    address1 = models.CharField(max_length=255, blank=True)
+    address2 = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=255, blank=True)
+    state = models.CharField(max_length=255, blank=True)
+    zipcode = models.CharField(max_length=20, blank=True)
+    country = models.CharField(max_length=255, blank=True)
+    birthday = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
 
     def __str__(self):
         return self.user.username
+    
+# create a user profile by default whenever a user registers
+def create_userprofile(sender, instance, created, **kwargs):
+    if created:
+        userprofile = UserProfile(user=instance)
+        userprofile.save() 
+        
+# Automate the profile
+post_save.connect(create_userprofile, sender=User)
 
 class Rating(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)

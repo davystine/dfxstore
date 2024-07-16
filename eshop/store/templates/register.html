@@ -11,13 +11,25 @@
         </div>
     </header>
 
-    <div class="container mt-4 col-md-4">
-        <form method="POST" actions="{% url 'register'%}">
-            {% csrf_token %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card text-white mb-3">
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{% url 'register' %}">
+                            {% csrf_token %}
 
-            {{ form.as_p}}
-            <button type="submit" class="btn btn-primary">Register</button>
-            <br/><br/>
+                            {{ registration_form.as_p}}
+                        <button type="submit" class="btn btn-secondary">Register</button>
+                        <br/><br/>
+                        
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
 {% endblock %}
