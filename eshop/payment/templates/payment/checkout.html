@@ -1,4 +1,5 @@
 {% extends 'store/base.html' %}
+{% load static %}
 
 {% block content %}
     <!-- Header-->
@@ -83,21 +84,35 @@
                     </div>
                     <div id="shippingFormCollapse" class="collapse">
                         <div class="card-body">
-                            <form method="POST">
+                            <form id="shippingForm" method="POST">
                                 {% csrf_token %}
                                 {{ shipping_form.as_p }}
+                                <!-- Display form errors -->
+                                {% if messages %}
+                                    <div class="alert alert-danger mt-3">
+                                        {% for message in messages %}
+                                            <p>{{ message }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </form>
                         </div>
                     </div>
                 </div>
 
-
                 <!-- Action Buttons -->
                 <div class="d-flex justify-content-end mt-3">
-                    <a href="{% url 'payment:checkout' %}" class="btn btn-success me-2">Proceed to Payment</a>
+                    <form id="clearCartForm" action="{% url 'payment:payment_success' %}" method="POST" style="display: none;">
+                        {% csrf_token %}
+                    </form>
+                    <button id="proceedToPayment" class="btn btn-success me-2" disabled>Proceed to Payment</button>
                     <a href="{% url 'cart:cart_summary' %}" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- jQuery and JavaScript for form validation -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/checkout.js' %}"></script>
 {% endblock %}

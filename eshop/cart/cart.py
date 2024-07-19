@@ -116,3 +116,9 @@ class Cart():
         # Save the cart back into the session and mark it as modified
         self.session['cart'] = self.cart
         self.session.modified = True
+        
+    def clear(self):
+        # Clear the cart
+        self.cart = {}
+        self.session['cart'] = self.cart
+        self.session.modified = True
