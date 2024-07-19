@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid, datetime
 from django.db.models.signals import post_save
+from django.db.models import Avg
 
 
 
@@ -31,6 +32,10 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_average_rating(self):
+        avg_rating = self.rating_set.aggregate(Avg('rating'))['rating__avg'] or 0
+        return round(avg_rating, 1)
 
 class UserProfile(models.Model):
     GENDER_CHOICES = [('', ''), ('M', 'Male'), ('F', 'Female'),('O', 'Other'),]
@@ -45,6 +50,7 @@ class UserProfile(models.Model):
     country = models.CharField(max_length=255, blank=True)
     birthday = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
+    cart = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return self.user.username

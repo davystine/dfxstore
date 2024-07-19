@@ -1,5 +1,3 @@
-# management/views.py
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from store.models import Item, Category
@@ -11,12 +9,12 @@ from .mixins import AdminRequiredMixin
 class ItemListView(AdminRequiredMixin, View):
     def get(self, request):
         items = Item.objects.all()
-        return render(request, 'item_list.html', {'items': items})
+        return render(request, 'management/item_list.html', {'items': items})
 
 class ItemCreateView(AdminRequiredMixin, View):
     def get(self, request):
         form = ItemForm()
-        return render(request, 'item_form.html', {'form': form})
+        return render(request, 'management/item_form.html', {'form': form})
 
     def post(self, request):
         form = ItemForm(request.POST, request.FILES)
@@ -26,13 +24,13 @@ class ItemCreateView(AdminRequiredMixin, View):
             return redirect('management:item_list')
         for error in form.errors.values():
             messages.error(request, error)
-        return render(request, 'item_form.html', {'form': form})
+        return render(request, 'management/item_form.html', {'form': form})
 
 class ItemUpdateView(AdminRequiredMixin, View):
     def get(self, request, pk):
         item = get_object_or_404(Item, pk=pk)
         form = ItemForm(instance=item)
-        return render(request, 'item_form.html', {'form': form})
+        return render(request, 'management/item_form.html', {'form': form})
 
     def post(self, request, pk):
         item = get_object_or_404(Item, pk=pk)
@@ -43,7 +41,7 @@ class ItemUpdateView(AdminRequiredMixin, View):
             return redirect('management:item_list')
         for error in form.errors.values():
             messages.error(request, error)
-        return render(request, 'item_form.html', {'form': form})
+        return render(request, 'management/item_form.html', {'form': form})
 
 class ItemDeleteView(AdminRequiredMixin, View):
     def post(self, request, pk):
@@ -57,12 +55,12 @@ class ItemDeleteView(AdminRequiredMixin, View):
 class CategoryListView(AdminRequiredMixin, View):
     def get(self, request):
         categories = Category.objects.all()
-        return render(request, 'category_list.html', {'categories': categories})
+        return render(request, 'management/category_list.html', {'categories': categories})
 
 class CategoryCreateView(AdminRequiredMixin, View):
     def get(self, request):
         form = CategoryForm()
-        return render(request, 'category_form.html', {'form': form})
+        return render(request, 'management/category_form.html', {'form': form})
 
     def post(self, request):
         form = CategoryForm(request.POST)
@@ -72,13 +70,13 @@ class CategoryCreateView(AdminRequiredMixin, View):
             return redirect('management:category_list')
         for error in form.errors.values():
             messages.error(request, error)
-        return render(request, 'category_form.html', {'form': form})
+        return render(request, 'management/category_form.html', {'form': form})
 
 class CategoryUpdateView(AdminRequiredMixin, View):
     def get(self, request, pk):
         category = get_object_or_404(Category, pk=pk)
         form = CategoryForm(instance=category)
-        return render(request, 'category_form.html', {'form': form})
+        return render(request, 'management/category_form.html', {'form': form})
 
     def post(self, request, pk):
         category = get_object_or_404(Category, pk=pk)
@@ -89,7 +87,7 @@ class CategoryUpdateView(AdminRequiredMixin, View):
             return redirect('management:category_list')
         for error in form.errors.values():
             messages.error(request, error)
-        return render(request, 'category_form.html', {'form': form})
+        return render(request, 'management/category_form.html', {'form': form})
 
 class CategoryDeleteView(AdminRequiredMixin, View):
     def post(self, request, pk):

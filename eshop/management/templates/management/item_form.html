@@ -1,0 +1,88 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!--Link to item.js-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{% static 'js/item.js' %}"></script>
+
+
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">{% if form.instance.pk %}Edit Item{% else %}Add Item{% endif %}</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Fill out the details below</p>
+        </div>
+    </div>
+</header>
+
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card shadow-sm p-4 mb-4">
+                    <form method="post" enctype="multipart/form-data" id="item-form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">{{ form.name.label }}</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">{{ form.description.label }}</label>
+                            {{ form.description }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_price" class="form-label">{{ form.price.label }}</label>
+                            {{ form.price }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_category" class="form-label">{{ form.category.label }}</label>
+                            {{ form.category }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_image" class="form-label">{{ form.image.label }}</label>
+                            {{ form.image }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.on_sale }}
+                            <label for="id_on_sale" class="form-check-label">{{ form.on_sale.label }}</label>
+                        </div>
+                        <div class="mb-3" id="sale-price-field" style="display: none;">
+                            <label for="id_sale_price" class="form-label">{{ form.sale_price.label }}</label>
+                            {{ form.sale_price }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_units_in_stock" class="form-label">{{ form.units_in_stock.label }}</label>
+                            {{ form.units_in_stock }}
+                        </div>
+                        <button type="submit" class="btn btn-dark">Save</button>
+                        <a href="{% url 'management:item_list' %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card h-100 shadow-sm position-relative">
+                    <div class="badge bg-danger text-white position-absolute" id="sale-badge" style="top: 0.5rem; right: 0.5rem; display: none;">Sale</div>
+                    <img src="{% if form.instance.image %}{{ form.instance.image.url }}{% else %}{% static 'default-image.png' %}{% endif %}" class="card-img-top" id="item-image" alt="{{ form.instance.name }}">
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h5 class="card-title" id="item-name">{{ form.instance.name }}</h5>
+                            <p class="card-text" id="item-description">{{ form.instance.description }}</p>
+                            <div id="price-section">
+                                <span class="text-muted text-decoration-line-through" id="item-original-price" style="display: none;">${{ form.instance.price }}</span>
+                                <span class="text-danger" id="item-sale-price" style="display: none;">${{ form.instance.sale_price }}</span>
+                                <span id="item-price">${{ form.instance.price }}</span>
+                            </div>
+                            <p class="card-text" id="item-units-in-stock">Units in Stock: {{ form.instance.units_in_stock }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "store/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+    <!-- storing script variables -->
+    <script>
+        const cartUpdateUrl = "{% url 'cart:cart_update' %}";
+        const cartDeleteUrl = "{% url 'cart:cart_delete' %}";
+        const csrfToken = "{{ csrf_token }}";
+    </script>
+    <!-- Linking script (Ajax) -->
+    <script src="{% static 'js/cart.js' %}"></script>
+    
+
+    <!-- Header -->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Shopping Cart</h1>
+                <p class="lead fw-normal text-white-50 mb-0">View Your Cart...</p>
+            </div>
+        </div>
+    </header>
+    <br/>
+    <div class="container col-lg-8 col-md-10 mx-auto">
+        {% if cart_items %}
+            <div class="shadow-sm bg-light rounded p-4">
+                <div class="row g-4">
+                    {% for item in cart_items %}
+                        <div class="col-12">
+                            <div class="card shadow-sm bg-light rounded">
+                                <div class="row g-0 align-items-center">
+                                    <div class="col-md-3 text-center">
+                                        <a href="{% url 'store:item' item.id %}" class="text-decoration-none">
+                                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="img-fluid rounded-start p-3" style="max-height: 150px;">
+                                        </a>
+                                    </div>
+                                    <div class="col-md-5 d-flex flex-column justify-content-center">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">
+                                                <a href="{% url 'store:item' item.id %}" class="text-decoration-none text-dark">{{ item.name }}</a>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 text-center">
+                                        {% for key, value in quantities.items %}
+                                            {% if key == item.id|slugify %}
+                                                <input class="form-control text-center update-cart mx-auto" id="{{ item.id }}" data-itemid="{{ item.id }}" type="number" value="{{ value }}" min="0" max="{{ item.units_in_stock }}" style="width: 5rem;">
+                                                <p class="text-muted small">Units in Stock: {{ item.units_in_stock }}</p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <div class="card-body">
+                                            {% if item.sale_price %}
+                                                <span class="text-danger fw-bold">${{ item.sale_price }}</span>
+                                                <br>
+                                                <span class="text-muted text-decoration-line-through">${{ item.price }}</span>
+                                            {% else %}
+                                                <span class="fw-bold">${{ item.price }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="col-12">
+                        <div class="shadow-sm bg-light rounded p-4 mt-3 text-end">
+                            <h3 id="cart-total" class="fw-bold">Total: ${{ totals }}</h3>
+                            <a class="btn btn-success mt-3 "href="{% url 'payment:checkout' %}">Checkout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-center">Your cart is empty.</p>
+        {% endif %}
+    </div>
+    <br><br>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete <span id="deleteItemName" class="fw-bold"></span> from your cart?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

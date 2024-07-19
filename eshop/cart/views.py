@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from .cart import Cart
 from store.models import Item
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 
 
 def cart_summary(request):
@@ -10,7 +11,7 @@ def cart_summary(request):
     cart_items = cart.get_items
     quantities = cart.get_qty()
     totals = cart.cart_total()
-    return render( request, "cart_summary.html", {"cart_items": cart_items, "quantities": quantities, "totals": totals})
+    return render( request, "cart/cart_summary.html", {"cart_items": cart_items, "quantities": quantities, "totals": totals})
 
 def cart_add(request):
     cart = Cart(request)  # Assuming you have a Cart class or module
@@ -107,3 +108,4 @@ def cart_delete(request):
         return JsonResponse({'success': True})
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
+

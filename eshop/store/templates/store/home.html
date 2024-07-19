@@ -1,0 +1,84 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- storing script variables -->
+<script type="text/javascript">
+    var cartAddUrl = "{% url 'cart:cart_add' %}";
+    var csrfToken = "{{ csrf_token }}";
+</script>
+<!-- Linking script (Ajax) -->
+<script src="{% static 'js/cart.js' %}" defer></script>
+
+<!-- Header-->
+<header class="bg-dark py-5 shadow-sm mt-8 pt-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Welcome to DFX</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Find The Best Collection of Items Here...</p>
+        </div>
+    </div>
+</header>
+
+<!-- Section-->
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for item in items %}
+                <div class="col mb-5">
+                    <div class="card h-100 shadow-sm">
+                        {% if item.on_sale %}
+                        <!-- Sale badge-->
+                        <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        {% endif %}
+                        <!-- Product image-->
+                        <img class="card-img-top" src="{{ item.image.url }}" alt="{{ item.name }}" />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder"><a href="{% url 'store:item' item.id %}" class="text-dark text-decoration-none">{{ item.name }}</a></h5>
+                                <!-- Product reviews-->
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    {% with item.get_average_rating as avg_rating %}
+                                        {% with avg_rating|floatformat:1 as rounded_rating %}
+                                            {% for i in "12345" %}
+                                                {% if rounded_rating >= i %}
+                                                    <i class="bi bi-star-fill"></i>  <!-- Full star -->
+                                                {% elif rounded_rating >= i|add:"0.5" %}
+                                                    <i class="bi bi-star-half"></i>  <!-- Half star -->
+                                                {% else %}
+                                                    <i class="bi bi-star"></i>  <!-- Empty star -->
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                </div>
+                                <!-- Product price-->
+                                {% if item.on_sale %}
+                                <span class="text-muted text-decoration-line-through">${{ item.price }}</span>
+                                <span class="text-danger">${{ item.sale_price }}</span>
+                                {% else %}
+                                ${{ item.price }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="d-flex justify-content-center">
+                                <input id="item-qty" type="number" value="1" min="1" max="{{ item.units_in_stock }}" style="display: none;">
+                                <button class="btn btn-warning btn-outline-dark flex-shrink-0" type="button" value="{{ item.id }}" id="add-cart">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Add to cart
+                                </button>                                        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

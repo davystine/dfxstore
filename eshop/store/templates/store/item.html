@@ -1,0 +1,86 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- Storing script variables -->
+<input type="hidden" id="rate-item-url" value="{% url 'store:rate_item' item.id %}">
+<input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+
+<script type="text/javascript">
+    var cartAddUrl = "{% url 'cart:cart_add' %}";
+    var csrfToken = "{{ csrf_token }}";
+</script>
+
+<!-- Linking scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/cart.js' %}" defer></script>
+<script src="{% static 'js/rating.js' %}" defer></script>
+
+<!-- Product Details Section -->
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6">
+                <img class="card-img-top mb-5 mb-md-0" src="{{ item.image.url }}" alt="{{ item.name }}" />
+            </div>
+            <div class="col-md-6">
+                <div class="small mb-1">SKU: {{ item.sku }}</div>
+                <h1 class="display-5 fw-bolder">{{ item.name }}</h1>
+                {% if item.on_sale %}
+                    <div class="fs-5 mb-5">
+                        <span class="text-decoration-line-through">${{ item.price }}</span>
+                        <span class="text-danger">${{ item.sale_price }}</span>
+                    </div>
+                {% else %}
+                    <div class="fs-5 mb-5">
+                        <span>${{ item.price }}</span>
+                    </div>
+                {% endif %}
+                <p class="lead">{{ item.description }}</p>
+                <div class="mb-5">
+                    <p><strong>Units in Stock:</strong> <span id="units-in-stock">{{ item.units_in_stock }}</span></p>
+                </div>
+                <!-- Average Rating Section -->
+                <div class="mb-4 text-start">
+                    <h5 class="mb-2">Average Rating:</h5>
+                    <div id="average-rating-stars" class="d-inline-flex">
+                        {% for i in "12345" %}
+                            <i class="bi-star{% if i <= item.get_average_rating %}-fill{% endif %} text-warning"></i>
+                        {% endfor %}
+                    </div>
+                    <p id="average-rating-text" class="mt-2">{{ item.get_average_rating }} / 5</p>
+                </div>
+
+                <!-- Add to Cart Section -->
+                <div class="d-flex align-items-center">
+                    <input class="form-control text-center me-3" id="item-qty" type="number" value="1" min="1" max="{{ item.units_in_stock }}" style="width: 5rem;">
+                    <button class="btn btn-warning btn-outline-dark" type="button" value="{{ item.id }}" id="add-cart">
+                        <i class="bi-cart-fill me-1"></i>
+                        Add to cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Rating Section -->
+<section class="py-3 bg-light">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center mb-4">
+            <h5 class="mb-4">Submit Your Rating:</h5>
+            {% if user.is_authenticated %}
+                <form id="rating-form" method="post" class="text-center mx-auto" style="max-width: 150px;">
+                    {% csrf_token %}
+                    {{ rating_form.as_p }}
+                    <button type="submit" class="btn btn-dark mt-3">Submit Rating</button>
+                </form>
+            {% else %}
+                <p class="text-warning text-center">You must be logged in to rate an item. <a href="{% url 'store:login' %}">Log in</a></p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

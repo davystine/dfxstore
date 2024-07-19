@@ -1,0 +1,37 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block content %}
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">
+                {% if form.instance.pk %}
+                    Edit Category
+                {% else %}
+                    Add Category
+                {% endif %}
+            </h1>
+            <p class="lead fw-normal text-white-50 mb-0">Fill in the details below to manage categories</p>
+        </div>
+    </div>
+</header>
+
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <form method="post" class="bg-light rounded p-5">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_name" class="form-label">{{ form.name.label }}</label>
+                {{ form.name }}
+            </div>
+            <div class="mb-3">
+                <label for="id_parent_category" class="form-label">{{ form.parent_category.label }}</label>
+                {{ form.parent_category }}
+            </div>
+            <button type="submit" class="btn btn-dark">Save</button>
+            <a href="{% url 'management:category_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</section>
+{% endblock %}

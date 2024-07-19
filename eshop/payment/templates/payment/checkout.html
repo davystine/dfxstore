@@ -1,0 +1,103 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Checkout</h1>
+                <p class="lead fw-normal text-white-50 mb-0">Order Summary</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Order Summary Card -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h3 class="mb-0">Order Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        {% for item in cart_items %}
+                            <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label mb-0"><strong>{{ item.name }}</strong></label>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <p class="form-control-plaintext mb-1">
+                                            {% if item.on_sale %}
+                                                ${{ item.sale_price }}
+                                            {% else %}
+                                                ${{ item.price }}
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label"><strong>Quantity:</strong></label>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <p class="form-control-plaintext">
+                                            {% for key, value in quantities.items %}
+                                                {% if key == item.id|slugify %}
+                                                    x {{ value }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                        {% endfor %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label h5"><strong>Tax:</strong></label>
+                            </div>
+                            <div class="col-6 text-end">
+                                <p class="form-control-plaintext h5">${{ totals.tax }}</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label display-6"><strong>Total:</strong></label>
+                            </div>
+                            <div class="col-6 text-end">
+                                <p class="form-control-plaintext display-6">${{ totals }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Information Card -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">Shipping Information</h3>
+                        <button class="btn btn-link text-white" type="button" data-bs-toggle="collapse" data-bs-target="#shippingFormCollapse" aria-expanded="false" aria-controls="shippingFormCollapse">
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div id="shippingFormCollapse" class="collapse">
+                        <div class="card-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{ shipping_form.as_p }}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-end mt-3">
+                    <a href="{% url 'payment:checkout' %}" class="btn btn-success me-2">Proceed to Payment</a>
+                    <a href="{% url 'cart:cart_summary' %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

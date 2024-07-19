@@ -1,0 +1,35 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Customer Registration</h1>
+                <p class="lead fw-normal text-white-50 mb-0">Register as a customer of DFX Shop</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card text-white mb-3">
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{% url 'store:register' %}">
+                            {% csrf_token %}
+
+                            {{ registration_form.as_p}}
+                        <button type="submit" class="btn btn-secondary">Register</button>
+                        <br/><br/>
+                        
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

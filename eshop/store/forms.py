@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPasswordForm
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, Rating
 from django import forms
 
 
@@ -92,3 +92,10 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['phone_number', 'address1', 'address2', 'city', 'state', 'zipcode', 'country', 'birthday', 'gender']
+
+
+class RatingForm(forms.Form):
+    rating = forms.ChoiceField(
+        choices=[(i, str(i)) for i in range(1, 6)],
+        widget=forms.Select(attrs={'class': 'form-select'}),
+    )

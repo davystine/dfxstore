@@ -1,0 +1,31 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Categories</h1>
+                <p class="lead fw-normal text-white-50 mb-0">Explore our product categories</p>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container py-5">
+        <div class="row">
+            {% for category in categories %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <a href="{% url 'store:category' category %}" class="text-decoration-none">
+                        <div class="card h-100 text-center shadow-sm">
+                            <div class="card-body">
+                                <h3 class="card-title text-dark">{{ category }}</h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+{% endblock %}

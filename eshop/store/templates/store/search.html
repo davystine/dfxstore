@@ -1,0 +1,82 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- Storing script variables -->
+<script type="text/javascript">
+    var cartAddUrl = "{% url 'cart:cart_add' %}";
+    var csrfToken = "{{ csrf_token }}";
+</script>
+<!-- Linking script (Ajax) -->
+<script src="{% static 'js/cart.js' %}" defer></script>
+
+<!-- Header -->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Search Results</h1>
+            <p class="lead fw-normal text-white-50 mb-0">For "{{ query }}"</p>
+        </div>
+    </div>
+</header>
+
+<!-- Section -->
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% if results %}
+                {% for item in results %}
+                    <div class="col mb-5">
+                        <a href="{% url 'store:item' item.id %}" class="text-dark text-decoration-none">
+                            <div class="card h-100">
+                                {% if item.on_sale %}
+                                    <!-- Sale badge -->
+                                    <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                                {% endif %}
+                                <!-- Product image -->
+                                <img class="card-img-top" src="{{ item.image.url }}" alt="{{ item.name }}" />
+                                <!-- Product details -->
+                                <div class="card-body p-4">
+                                    <div class="text-center">
+                                        <!-- Product name -->
+                                        <h5 class="fw-bolder">{{ item.name }}</h5>
+                                        
+                                        <!-- Product reviews -->
+                                        <div class="d-flex justify-content-center small text-warning mb-2">
+                                            {% with item.get_average_rating as avg_rating %}
+                                                {% with avg_rating|floatformat:1 as rounded_rating %}
+                                                    {% for i in "12345" %}
+                                                        {% if rounded_rating >= i %}
+                                                            <i class="bi bi-star-fill"></i>  <!-- Full star -->
+                                                        {% elif rounded_rating >= i|add:"0.5" %}
+                                                            <i class="bi bi-star-half"></i>  <!-- Half star -->
+                                                        {% else %}
+                                                            <i class="bi bi-star"></i>  <!-- Empty star -->
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endwith %}
+                                            {% endwith %}
+                                        </div>
+
+                                        <!-- Product price -->
+                                        {% if item.on_sale %}
+                                            <span class="text-muted text-decoration-line-through">${{ item.price }}</span>
+                                            <span class="text-danger">${{ item.sale_price }}</span>
+                                        {% else %}
+                                            ${{ item.price }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-center">No results found for "{{ query }}".</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
