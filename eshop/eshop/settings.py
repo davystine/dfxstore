@@ -12,9 +12,16 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+import django_heroku
+import dj_database_url
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+#load environmental variable
+load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
@@ -84,12 +91,29 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'DFXdatabase',
         'HOST': 'localhost',
-        'POST': '3306',
+        'PORT': '3306',  # Corrected from 'POST' to 'PORT'
         'USER': 'root',
         'PASSWORD': 'root'
-    }
+    },
+    
+    'mysql_railway': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'railway',
+        'HOST': 'mysql.railway.internal',
+        'PORT': '3306',
+        'USER': 'root',
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),  # Correct reference to environment variable
+    },
+    
+    'postgres_railway': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': 'postgres.railway.internal',
+        'PORT': '5432',
+    },
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -137,4 +161,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
+django_heroku.settings(locals())
 
